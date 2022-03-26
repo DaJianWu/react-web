@@ -1,22 +1,23 @@
 {
-  "name": "project-20210925",
+  "name": "react-web",
   "version": "1.0.0",
-  "description": "从0开始搭建1个前端项目",
+  "description": "一个 React 的网页项目",
   "keywords": [
     "html",
     "css",
-    "js"
+    "js",
+    "react"
   ],
   "author": "wudajian",
   "license": "MIT",
   "main": "src/index.js",
-  "homepage": "https://github.com/DaJianWu/project-20210925#readme",
+  "homepage": "https://github.com/DaJianWu/react-web#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DaJianWu/project-20210925.git"
+    "url": "git+https://github.com/DaJianWu/react-web.git"
   },
   "bugs": {
-    "url": "https://github.com/DaJianWu/project-20210925/issues"
+    "url": "https://github.com/DaJianWu/react-web/issues"
   },
   "lint-staged": {
     "*.{js,ts}": "eslint --fix",
