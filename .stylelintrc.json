@@ -1,0 +1,10 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-prettier"
+  ],
+  "rules": {},
+  "ignoreFiles": [
+    "node_modules/"
+  ]
+}
