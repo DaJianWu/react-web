@@ -28,7 +28,7 @@ module.exports = (env, argv) => {
     // 模式
     // mode: 'none',
     // 入口
-    entry: path.resolve(__dirname, 'src/index.js'),
+    entry: path.resolve(__dirname, 'src/index.jsx'),
     // 出口
     output: {
       path: path.resolve(__dirname, 'dist'),
@@ -43,6 +43,10 @@ module.exports = (env, argv) => {
       static: path.resolve(__dirname, 'public'),
       open: true,
       hot: true,
+    },
+    // 解析
+    resolve: {
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
     },
     // 优化
     optimization: {
@@ -68,7 +72,7 @@ module.exports = (env, argv) => {
           use: [...cssLoaders, 'sass-loader'],
         },
         {
-          test: /\.(js|ts)$/,
+          test: /\.(jsx?|tsx?)$/,
           exclude: /node_modules/,
           use: {
             loader: 'babel-loader',

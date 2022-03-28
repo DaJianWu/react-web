@@ -1,5 +1,6 @@
 // https://eslint.bootcss.com
 {
+  // 根目录
   "root": true,
   // 环境
   "env": {
@@ -12,18 +13,29 @@
   // 解析器选项
   "parserOptions": {
     "ecmaVersion": 13,
-    "sourceType": "module"
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
   },
   // 继承
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
     "prettier"
   ],
   // 插件
   "plugins": [
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "react"
   ],
+  // 共享设置
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   // 规则
   "rules": {
     /*
