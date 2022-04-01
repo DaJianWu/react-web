@@ -43,6 +43,18 @@ module.exports = (env, argv) => {
       static: path.resolve(__dirname, 'public'),
       open: true,
       hot: true,
+      // historyApiFallback: true,
+      // proxy: {
+      //   '/': {
+      //     target: 'http://localhost:8080',
+      //     bypass: function (req, res, proxyOptions) {
+      //       if (req.headers.accept.indexOf('html') !== -1) {
+      //         console.log('Skipping proxy for browser request.');
+      //         return '/index.html';
+      //       }
+      //     },
+      //   },
+      // },
     },
     // 解析
     resolve: {

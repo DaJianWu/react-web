@@ -1,11 +1,18 @@
 import React from 'react';
-import ReactDom from 'react-dom';
+import ReactDOMClient from 'react-dom/client';
+import { BrowserRouter, HashRouter } from 'react-router-dom';
 
 import './index.css';
 import App from './App';
 
-ReactDom.render(<App />, document.getElementById('root'));
+ReactDOMClient.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <HashRouter>
+      <App />
+    </HashRouter>
+  </React.StrictMode>
+);
 
-if (module && module.hot) {
-  module.hot.accept();
-}
+// if (module && module.hot) {
+//   module.hot.accept();
+// }

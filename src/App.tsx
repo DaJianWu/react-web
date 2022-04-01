@@ -1,10 +1,23 @@
 import React from 'react';
+import { Routes, Route, Link } from 'react-router-dom';
+import { ConfigProvider } from 'antd';
+import zhCN from 'antd/lib/locale/zh_CN';
 
-import style from './App.module.scss';
+import './App.css';
+import { Home } from './pages/Home';
 
 class App extends React.Component {
-  render() {
-    return <h1 className={style.app}>Hello React-Web</h1>;
+  public render() {
+    return (
+      <div className='app'>
+        <ConfigProvider locale={zhCN}>
+          <Link to='/home'>go home</Link>
+          <Routes>
+            <Route path='/home' element={<Home />} />
+          </Routes>
+        </ConfigProvider>
+      </div>
+    );
   }
 }
 
