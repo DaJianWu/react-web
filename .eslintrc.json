@@ -44,6 +44,7 @@
       "error" or 2 - 将规则视为一个错误 (退出码为1)
     */
     "no-console": 2,
-    "@typescript-eslint/no-unused-vars": 0
+    "@typescript-eslint/no-unused-vars": 0,
+    "@typescript-eslint/no-explicit-any": 0
   }
 }
