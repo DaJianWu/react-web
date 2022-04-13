@@ -6,7 +6,7 @@ import zhCN from 'antd/lib/locale/zh_CN';
 
 import './App.css';
 import { store } from './redux/store';
-import { Home } from './pages/Home';
+import { Layout } from 'src/Layout';
 
 class App extends React.Component {
   public render() {
@@ -14,10 +14,7 @@ class App extends React.Component {
       <div className='app'>
         <ConfigProvider locale={zhCN}>
           <Provider store={store}>
-            <Link to='/home'>go home</Link>
-            <Routes>
-              <Route path='/home' element={<Home />} />
-            </Routes>
+            <Layout />
           </Provider>
         </ConfigProvider>
       </div>

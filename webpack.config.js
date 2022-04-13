@@ -59,6 +59,9 @@ module.exports = (env, argv) => {
     // 解析
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      alias: {
+        src: path.resolve(__dirname, 'src/'),
+      },
     },
     // 优化
     optimization: {
