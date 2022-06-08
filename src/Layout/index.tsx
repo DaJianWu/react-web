@@ -29,15 +29,21 @@ interface S {
  * @extends {React.PureComponent<P, S>}
  */
 export class Layout extends React.PureComponent<P, S> {
-  state = {
+  public state = {
     collapsed: false,
-    selectedKeys: [location.hash.split('#')[1]],
-    openKeys: routerConfigFlattenDeep
-      .filter((i) => location.hash.includes(i.path))
-      .map((i) => i.path),
+    ...Layout.getOpensAndSelectedKeys(),
   };
 
-  render() {
+  public static getOpensAndSelectedKeys = () => {
+    return {
+      selectedKeys: [location.hash.split('#')[1]],
+      openKeys: routerConfigFlattenDeep
+        .filter((i) => location.hash.includes(i.path))
+        .map((i) => i.path),
+    };
+  };
+
+  public render() {
     const { collapsed, selectedKeys, openKeys } = this.state;
 
     return (
@@ -48,9 +54,9 @@ export class Layout extends React.PureComponent<P, S> {
         <AntdLayout>
           <Sider
             theme='dark'
-            // collapsible
-            // collapsed={collapsed}
-            // onCollapse={(collapsed: boolean) => this.setState({ collapsed })}
+            collapsible
+            collapsed={collapsed}
+            onCollapse={(collapsed: boolean) => this.setState({ collapsed })}
           >
             <Menu
               theme='dark'
@@ -65,8 +71,11 @@ export class Layout extends React.PureComponent<P, S> {
           </Sider>
           <AntdLayout>
             <Breadcrumb>
-              <Breadcrumb.Item key='home'>
-                <Link to='/'>Home</Link>
+              <Breadcrumb.Item
+                key='home'
+                onClick={() => this.setState(Layout.getOpensAndSelectedKeys())}
+              >
+                <Link to='/home'>Home</Link>
               </Breadcrumb.Item>
               {this.renderBreadcrumbItems()}
             </Breadcrumb>
@@ -82,29 +91,6 @@ export class Layout extends React.PureComponent<P, S> {
         <Footer>React Web Created by wudajian</Footer>
       </AntdLayout>
     );
-  }
-
-  private renderBreadcrumbItems() {
-    const pathSnippets = location.hash.split('/').filter((i) => i !== '#');
-
-    return pathSnippets.map((_, index) => {
-      const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
-      const item = routerConfigFlattenDeep.find((i) => i.path === url);
-
-      if (item) {
-        return (
-          <Breadcrumb.Item key={url}>
-            {item.children?.length ? (
-              item.title
-            ) : (
-              <Link to={url}>{item.title}</Link>
-            )}
-          </Breadcrumb.Item>
-        );
-      } else {
-        return null;
-      }
-    });
   }
 
   private renderMenuItems(routerConfig: RouterConfig[]) {
@@ -135,6 +121,29 @@ export class Layout extends React.PureComponent<P, S> {
         );
       } else {
         return <Route key={i.path} path={i.path} element={i.element} />;
+      }
+    });
+  }
+
+  private renderBreadcrumbItems() {
+    const pathSnippets = location.hash.split('/').filter((i) => i !== '#');
+
+    return pathSnippets.map((_, index) => {
+      const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
+      const item = routerConfigFlattenDeep.find((i) => i.path === url);
+
+      if (item) {
+        return (
+          <Breadcrumb.Item key={url}>
+            {item.children?.length ? (
+              item.title
+            ) : (
+              <Link to={url}>{item.title}</Link>
+            )}
+          </Breadcrumb.Item>
+        );
+      } else {
+        return null;
       }
     });
   }
