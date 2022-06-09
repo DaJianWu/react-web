@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, Outlet } from 'react-router-dom';
 import { Layout as AntdLayout, Menu, Breadcrumb, Avatar } from 'antd';
 
 import './style.less';
@@ -30,7 +30,7 @@ interface S {
  */
 export class Layout extends React.PureComponent<P, S> {
   public state = {
-    collapsed: false,
+    collapsed: true,
     ...Layout.getOpensAndSelectedKeys(),
   };
 
@@ -53,13 +53,13 @@ export class Layout extends React.PureComponent<P, S> {
         </Header>
         <AntdLayout>
           <Sider
-            theme='dark'
+            theme='light'
             collapsible
             collapsed={collapsed}
             onCollapse={(collapsed: boolean) => this.setState({ collapsed })}
           >
             <Menu
-              theme='dark'
+              theme='light'
               mode='inline'
               onSelect={({ selectedKeys }) => this.setState({ selectedKeys })}
               onOpenChange={(openKeys) => this.setState({ openKeys })}
@@ -104,7 +104,7 @@ export class Layout extends React.PureComponent<P, S> {
       } else {
         return (
           <Menu.Item key={i.path} icon={i.icon}>
-            <Link to={i.path as string}>{i.title}</Link>
+            <Link to={i.path}>{i.title}</Link>
           </Menu.Item>
         );
       }
