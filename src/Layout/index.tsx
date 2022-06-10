@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Link, Outlet } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import { Layout as AntdLayout, Menu, Breadcrumb, Avatar } from 'antd';
 
 import './style.less';

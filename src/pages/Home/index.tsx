@@ -1,22 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 
 import style from './style.module.scss';
-import { selectorValue, fetchData } from '../../redux';
+import { selectorLoading, selectorValue, init, fetchData } from 'src/redux';
 
+/**
+ * @description 首页
+ * @author wudajian
+ * @date 2022/06/08
+ * @returns React.FC
+ */
 export const Home: React.FC = () => {
+  const loading = useSelector(selectorLoading);
   const value = useSelector(selectorValue);
   const dispatch = useDispatch();
+
+  const [random, setRandom] = useState(0);
+
+  useEffect(() => {
+    dispatch(init({ value: 'hello' }));
+  }, []);
+
+  const handleOnClick = () => {
+    dispatch(fetchData);
+    setRandom(Math.random());
+  };
 
   return (
     <div className={style.page}>
       <Button
-        type='primary'
         className={style.button}
-        onClick={() => dispatch(fetchData)}
+        type='primary'
+        loading={loading}
+        onClick={handleOnClick}
       >
-        Home {value}
+        Click Me! {value} {Boolean(random) && random}
       </Button>
     </div>
   );

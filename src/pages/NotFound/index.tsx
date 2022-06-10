@@ -1,6 +1,12 @@
 import React from 'react';
 import { Result, Button } from 'antd';
 
+/**
+ * @description 404页面
+ * @author wudajian
+ * @date 2022/06/08
+ * @returns React.FC
+ */
 export const NotFound: React.FC = () => {
   return (
     <Result

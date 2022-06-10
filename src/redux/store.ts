@@ -1,11 +1,12 @@
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 
-import axiosInstance from '../server';
-import { init } from './action';
+import axiosInstance from 'src/server';
+import { init, update } from './action';
 import { reducer } from './reducer';
 
 export const initialStore = {
+  loading: false,
   value: 0,
 };
 
@@ -15,9 +16,12 @@ export const store = createStore(
   applyMiddleware(thunkMiddleware)
 );
 
+export const selectorLoading = (state: any) => state.loading;
 export const selectorValue = (state: any) => state.value;
 
 export async function fetchData(dispatch: any, getState: any) {
+  dispatch(update({ loading: true }));
+
   const response = await axiosInstance.get(
     'https://dajianwu.github.io/dist/data.json'
   );
@@ -26,7 +30,7 @@ export async function fetchData(dispatch: any, getState: any) {
   // const stateBefore = getState();
   // console.log('before dispatch: ', stateBefore);
 
-  dispatch(init(response.data));
+  dispatch(update({ ...response.data, loading: false }));
 
   // const stateAfter = getState();
   // console.log('after dispatch: ', stateAfter);

@@ -4,11 +4,10 @@ import { MenuItemProps } from 'antd';
 import { DesktopOutlined, PieChartOutlined } from '@ant-design/icons';
 
 import { Home } from 'src/pages/Home';
-import { Page1 } from 'src/pages/page1';
+import { Page1 } from 'src/pages/Page1';
 
 export interface RouterConfig extends RouteProps, MenuItemProps {
   children?: RouterConfig[];
-  breadcrumbName: string;
   path: string;
 }
 
@@ -18,20 +17,17 @@ export interface RouterConfig extends RouteProps, MenuItemProps {
 export const routerConfig: RouterConfig[] = [
   {
     title: '首页',
-    breadcrumbName: '首页',
     icon: <DesktopOutlined />,
     path: '/home',
     element: <Home />,
   },
   {
     title: '页面',
-    breadcrumbName: '页面',
     icon: <PieChartOutlined />,
     path: '/page',
     children: [
       {
         title: '页面1',
-        breadcrumbName: '页面1',
         path: '/page/1',
         element: <Page1 />,
       },

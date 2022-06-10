@@ -5,6 +5,11 @@ import { HashRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
 
+/**
+ * @description 项目入口
+ * @author wudajian
+ * @date 2022/06/08
+ */
 ReactDOMClient.createRoot(document.getElementById('root')).render(
   // <React.StrictMode>
   <HashRouter>
