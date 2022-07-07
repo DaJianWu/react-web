@@ -50,6 +50,13 @@ export class Layout extends React.PureComponent<P, S> {
       <AntdLayout>
         <Header>
           <Avatar src='https://joeschmoe.io/api/v1/random' />
+          <a
+            href='http://121.41.44.66:3000/dist/index.html'
+            target='_blank'
+            rel='noreferrer'
+          >
+            cloud server
+          </a>
         </Header>
         <AntdLayout>
           <Sider
