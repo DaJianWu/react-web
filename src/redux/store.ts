@@ -22,7 +22,7 @@ export const selectorValue = (state: any) => state.value;
 export async function fetchData(dispatch: any, getState: any) {
   dispatch(update({ loading: true }));
 
-  const response = await axiosInstance.get('http://121.41.44.66:3000/');
+  const response = await axiosInstance.get('http://www.wudajian.xyz/api/');
   // console.log(response);
 
   // const stateBefore = getState();
