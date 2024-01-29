@@ -1,19 +1,16 @@
 import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Switch, Route, Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { Layout as AntdLayout, Menu, Breadcrumb, Avatar } from 'antd';
+import { GitlabOutlined, Html5Outlined } from '@ant-design/icons';
 
 import './style.less';
-import {
-  routerConfig,
-  RouterConfig,
-  routerConfigFlattenDeep,
-} from 'src/routes';
-import { Home } from 'src/pages/Home';
-import { NotFound } from 'src/pages/NotFound';
+import { routerConfig, RouterConfig, findDeep, flattenDeep } from '../routes';
+import { Home } from '../pages/Home';
+import { NotFound } from '../pages/NotFound';
 
 const { Header, Sider, Content, Footer } = AntdLayout;
 
-interface P {}
+interface P extends RouteComponentProps {}
 interface S {
   collapsed: boolean;
   selectedKeys: string[];
@@ -28,33 +25,69 @@ interface S {
  * @class Layout
  * @extends {React.PureComponent<P, S>}
  */
-export class Layout extends React.PureComponent<P, S> {
-  public state = {
-    collapsed: true,
-    ...Layout.getOpensAndSelectedKeys(),
+class Layout extends React.PureComponent<P, S> {
+  public historyListen: any;
+
+  public getFindDeepResult = () => {
+    const hashResult = location.hash.split('#')[1];
+    const findDeepResult = findDeep(routerConfig, hashResult);
+
+    if (findDeepResult) {
+      return {
+        id: hashResult,
+        item: findDeepResult,
+      };
+    }
   };
 
-  public static getOpensAndSelectedKeys = () => {
-    return {
-      selectedKeys: [location.hash.split('#')[1]],
-      openKeys: routerConfigFlattenDeep
-        .filter((i) => location.hash.includes(i.path))
-        .map((i) => i.path),
-    };
+  public getOpenAndSelectedKeys = () => {
+    const result = this.getFindDeepResult();
+
+    if (result) {
+      return {
+        selectedKeys: [result.id],
+        openKeys: flattenDeep([result.item], false).map((i) => i.path),
+      };
+    } else {
+      return {
+        selectedKeys: [],
+        openKeys: [],
+      };
+    }
   };
+
+  public state = {
+    collapsed: false,
+    ...this.getOpenAndSelectedKeys(),
+  };
+
+  public componentDidMount(): void {
+    const { history } = this.props;
+
+    this.historyListen = history.listen((location) => {
+      // console.log('路由变化：', location);
+
+      this.setState((prev) => ({
+        ...prev,
+        ...this.getOpenAndSelectedKeys(),
+      }));
+    });
+  }
+
+  public componentWillUnmount(): void {
+    this.historyListen && this.historyListen();
+  }
 
   public render() {
     const { collapsed, selectedKeys, openKeys } = this.state;
+
+    console.log(selectedKeys, openKeys);
 
     return (
       <AntdLayout>
         <Header>
           <Avatar src='https://joeschmoe.io/api/v1/random' />
-          <a
-            href='http://www.wudajian.xyz'
-            target='_blank'
-            rel='noreferrer'
-          >
+          <a href='http://www.wudajian.xyz' target='_blank' rel='noreferrer'>
             Destiny 的个人首页
           </a>
         </Header>
@@ -68,8 +101,10 @@ export class Layout extends React.PureComponent<P, S> {
             <Menu
               theme='light'
               mode='inline'
-              onSelect={({ selectedKeys }) => this.setState({ selectedKeys })}
-              onOpenChange={(openKeys) => this.setState({ openKeys })}
+              onSelect={({ selectedKeys }) =>
+                this.setState({ selectedKeys: selectedKeys as string[] })
+              }
+              onOpenChange={(openKeys) => this.setState({ openKeys: openKeys as string[] })}
               selectedKeys={selectedKeys}
               openKeys={openKeys}
             >
@@ -78,20 +113,17 @@ export class Layout extends React.PureComponent<P, S> {
           </Sider>
           <AntdLayout>
             <Breadcrumb>
-              <Breadcrumb.Item
-                key='home'
-                onClick={() => this.setState(Layout.getOpensAndSelectedKeys())}
-              >
+              <Breadcrumb.Item key='home'>
                 <Link to='/home'>Home</Link>
               </Breadcrumb.Item>
               {this.renderBreadcrumbItems()}
             </Breadcrumb>
             <Content>
-              <Routes>
-                <Route index element={<Home />} />
+              <Switch>
+                <Route path='/' exact component={Home} />
                 {this.renderRoutes(routerConfig)}
-                <Route path='*' element={<NotFound />} />
-              </Routes>
+                <Route path='*' component={NotFound} />
+              </Switch>
             </Content>
           </AntdLayout>
         </AntdLayout>
@@ -101,17 +133,17 @@ export class Layout extends React.PureComponent<P, S> {
   }
 
   private renderMenuItems(routerConfig: RouterConfig[]) {
-    return routerConfig.map((i) => {
-      if (i.children?.length) {
+    return routerConfig.map((route) => {
+      if (route.children?.length) {
         return (
-          <Menu.SubMenu key={i.path} title={i.title} icon={i.icon}>
-            {this.renderMenuItems(i.children)}
+          <Menu.SubMenu key={route.path} title={route.title} icon={route.icon}>
+            {this.renderMenuItems(route.children)}
           </Menu.SubMenu>
         );
       } else {
         return (
-          <Menu.Item key={i.path} icon={i.icon}>
-            <Link to={i.path}>{i.title}</Link>
+          <Menu.Item key={route.path} icon={route.icon}>
+            <Link to={route.path}>{route.title}</Link>
           </Menu.Item>
         );
       }
@@ -119,39 +151,30 @@ export class Layout extends React.PureComponent<P, S> {
   }
 
   private renderRoutes(routerConfig: RouterConfig[]) {
-    return routerConfig.map((i) => {
-      if (i.children?.length) {
+    return routerConfig.map((route) => {
+      if (route.children?.length) {
         return (
-          <Route key={i.path} path={i.path}>
-            {this.renderRoutes(i.children)}
+          <Route key={route.path} path={route.path}>
+            {this.renderRoutes(route.children)}
           </Route>
         );
       } else {
-        return <Route key={i.path} path={i.path} element={i.element} />;
+        return <Route key={route.path} path={route.path} component={route.component} />;
       }
     });
   }
 
   private renderBreadcrumbItems() {
-    const pathSnippets = location.hash.split('/').filter((i) => i !== '#');
+    const result = this.getFindDeepResult();
 
-    return pathSnippets.map((_, index) => {
-      const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
-      const item = routerConfigFlattenDeep.find((i) => i.path === url);
-
-      if (item) {
-        return (
-          <Breadcrumb.Item key={url}>
-            {item.children?.length ? (
-              item.title
-            ) : (
-              <Link to={url}>{item.title}</Link>
-            )}
-          </Breadcrumb.Item>
-        );
-      } else {
-        return null;
-      }
-    });
+    if (result) {
+      return flattenDeep([result.item], true).map((route) => (
+        <Breadcrumb.Item key={route.path}>
+          {route.children?.length ? route.title : <Link to={route.path}>{route.title}</Link>}
+        </Breadcrumb.Item>
+      ));
+    }
   }
 }
+
+export default withRouter(Layout) as any;

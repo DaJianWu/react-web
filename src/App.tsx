@@ -1,12 +1,12 @@
 import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Switch, Route, Link } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import { Provider } from 'react-redux';
 import zhCN from 'antd/lib/locale/zh_CN';
 
 import './App.css';
 import { store } from 'src/redux/store';
-import { Layout } from 'src/Layout';
+import Layout from 'src/Layout';
 
 /**
  * @description 应用入口

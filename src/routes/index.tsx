@@ -1,14 +1,15 @@
 import React from 'react';
-import { RouteProps } from 'react-router-dom';
-import { MenuItemProps } from 'antd';
 import { DesktopOutlined, PieChartOutlined } from '@ant-design/icons';
+
+import type { RouteProps } from 'react-router-dom';
+import type { MenuItemProps } from 'antd/lib/menu/MenuItem';
 
 import { Home } from 'src/pages/Home';
 import { Page1 } from 'src/pages/Page1';
 
 export interface RouterConfig extends RouteProps, MenuItemProps {
-  children?: RouterConfig[];
   path: string;
+  children?: RouterConfig[];
 }
 
 /**
@@ -19,7 +20,7 @@ export const routerConfig: RouterConfig[] = [
     title: '首页',
     icon: <DesktopOutlined />,
     path: '/home',
-    element: <Home />,
+    component: Home,
   },
   {
     title: '页面',
@@ -29,49 +30,61 @@ export const routerConfig: RouterConfig[] = [
       {
         title: '页面1',
         path: '/page/1',
-        element: <Page1 />,
+        component: Page1,
       },
     ],
   },
 ];
 
 /**
- * @description 把路由配置扁平化为一维数组
- * @param originData
- * @returns routerConfigFlattenDeep
+ * @description 把树级节点扁平化为一维数组
+ * @param nodes 节点数据
+ * @param isChildNode 是否包含末级节点
+ * @returns flattenData
  */
-export const flattenDeep = (originData = routerConfig) => {
-  const routerConfigFlattenDeep: RouterConfig[] = [];
+export function flattenDeep(nodes: RouterConfig[] = routerConfig, isChildNode: boolean = true) {
+  const flattenData: RouterConfig[] = [];
 
-  const loop = (data = originData) => {
+  (function loop(data: RouterConfig[]) {
     data.forEach((i) => {
       if (i.children?.length) {
-        routerConfigFlattenDeep.push(i);
+        flattenData.push(i);
+
         loop(i.children);
       } else {
-        routerConfigFlattenDeep.push(i);
+        if (isChildNode) {
+          flattenData.push(i);
+        }
       }
     });
-  };
-  loop();
+  })(nodes);
 
-  return routerConfigFlattenDeep;
-};
+  return flattenData;
+}
 
-export const routerConfigFlattenDeep = flattenDeep();
+/**
+ * @description 根据 ID 深度查找树级节点
+ * @param nodes 节点数据
+ * @param id 目标节点ID
+ * @returns 包含目标节点及其相关的父级节点
+ */
+export function findDeep(nodes: RouterConfig[], id: RouterConfig['path']): RouterConfig | null {
+  for (const node of nodes) {
+    if (node.path === id) {
+      return node;
+    }
 
-// export const find = (key: string, data: RouterConfig[]) => {
-//   for (let index = 0; index < data.length; index++) {
-//     const item = data[index];
+    if (node.children) {
+      const result = findDeep(node.children, id);
 
-//     if (item.children?.length) {
-//       return find(key, item.children);
-//     } else {
-//       if (item.path === key) {
-//         return item;
-//       } else {
-//         return undefined;
-//       }
-//     }
-//   }
-// };
+      if (result !== null) {
+        return {
+          ...node,
+          children: [result],
+        };
+      }
+    }
+  }
+
+  return null;
+}

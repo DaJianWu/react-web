@@ -1,66 +1,89 @@
 // https://webpack.docschina.org
 
-/* eslint-disable */
+const path = require('path');
 
 const webpack = require('webpack');
-const path = require('path');
+const { merge } = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer');
 
-module.exports = (env, argv) => {
-  // console.log(env, argv, process.env.NODE_ENV, process.env.APP_ENV);
+/**
+ * @description 开发环境配置
+ * @type {import('webpack').Configuration}
+ */
+const developmentConfig = {
+  // 模式
+  mode: 'development',
+  // 调试
+  devtool: 'source-map',
+  // 开发服务器
+  devServer: {
+    // static: path.resolve(__dirname, 'public'),
+    port: 8888,
+    open: true,
+    hot: true,
+    historyApiFallback: true,
+    proxy: {},
+  },
+  // 插件
+  plugins: [new webpack.ProgressPlugin()],
+};
 
-  const isEnvDevelopment = env.APP_ENV === 'dev';
-  const isEnvProduction = env.APP_ENV === 'prod';
+/**
+ * @description 生产环境配置
+ * @type {import('webpack').Configuration}
+ */
+const productionConfig = {
+  // 模式
+  mode: 'production',
+  // 调试
+  devtool: false,
+  // 插件
+  plugins: [new BundleAnalyzerPlugin.BundleAnalyzerPlugin()],
+};
 
-  const cssLoaders = [
-    (isEnvDevelopment && 'style-loader') ||
-      (isEnvProduction && MiniCssExtractPlugin.loader),
-    'css-loader',
-    'postcss-loader',
-  ];
+/**
+ * @description 调试环境配置
+ * @type {import('webpack').Configuration}
+ */
+const debuggerConfig = {
+  // 模式
+  mode: 'development',
+  // 调试
+  devtool: 'source-map',
+};
 
+/**
+ * @description 公共配置
+ * @returns {import('webpack').Configuration}
+ */
+function getCommonConfig(env) {
   return {
     // 构建目标
-    // target: 'browserslist',
-    // 模式
-    // mode: 'none',
+    target: 'browserslist',
     // 入口
     entry: path.resolve(__dirname, 'src/index.jsx'),
     // 出口
     output: {
       path: path.resolve(__dirname, 'dist'),
-      filename: '[name].bundle.js',
+      filename: 'js/[name].[chunkhash].js',
+      assetModuleFilename: 'assets/[hash][ext]',
       clean: true,
-      // publicPath: '/',
+      publicPath: '/',
     },
-    // devtool
-    devtool: (isEnvDevelopment && 'source-map') || (isEnvProduction && false),
-    // DevServer
-    devServer: {
-      static: path.resolve(__dirname, 'public'),
-      open: true,
-      hot: true,
-      // historyApiFallback: true,
-      // proxy: {
-      //   '/': {
-      //     target: 'http://localhost:8080',
-      //     bypass: function (req, res, proxyOptions) {
-      //       if (req.headers.accept.indexOf('html') !== -1) {
-      //         console.log('Skipping proxy for browser request.');
-      //         return '/index.html';
-      //       }
-      //     },
-      //   },
-      // },
+    // 缓存
+    cache: {
+      type: 'filesystem',
+      cacheDirectory: path.resolve(__dirname, 'node_modules/.cache/webpack'),
     },
     // 解析
     resolve: {
+      modules: ['node_modules'],
       extensions: ['.js', '.jsx', '.ts', '.tsx'],
       alias: {
-        src: path.resolve(__dirname, 'src/'),
+        src: path.resolve(__dirname, 'src'),
       },
     },
     // 优化
@@ -68,6 +91,23 @@ module.exports = (env, argv) => {
       // 分块策略
       splitChunks: {
         chunks: 'all',
+        cacheGroups: {
+          // defaultVendors: {
+          //   test: /[\\/]node_modules[\\/]/,
+          //   priority: -10,
+          //   reuseExistingChunk: true,
+          // },
+          // default: {
+          //   minChunks: 2,
+          //   priority: -20,
+          //   reuseExistingChunk: true,
+          // },
+          // styles: {
+          //   test: /\.css$/,
+          //   minSize: 0,
+          //   minChunks: 2,
+          // }
+        },
       },
     },
     // 模块
@@ -76,44 +116,50 @@ module.exports = (env, argv) => {
       rules: [
         {
           test: /\.css$/,
-          use: cssLoaders,
+          use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
         },
         {
           test: /\.less$/,
-          use: [...cssLoaders, 'less-loader'],
+          use: [
+            MiniCssExtractPlugin.loader,
+            'css-loader',
+            'postcss-loader',
+            'less-loader',
+          ],
         },
         {
-          test: /\.s[ac]ss$/,
-          use: [...cssLoaders, 'sass-loader'],
+          test: /\.scss$/,
+          use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
         },
         {
           test: /\.(jsx?|tsx?)$/,
           exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-            // options: {},
-          },
+          use: ['thread-loader', 'babel-loader'],
         },
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
-          type: 'asset/resource',
-        },
-        {
-          test: /\.(woff|woff2|eot|ttf|otf)$/i,
-          type: 'asset/resource',
+          type: 'asset',
+          parser: {
+            dataUrlCondition: {
+              maxSize: 4 * 1024,
+            },
+          },
         },
       ],
     },
     // 插件
     plugins: [
-      new webpack.ProgressPlugin(),
+      new HtmlWebpackPlugin({
+        filename: 'index.html',
+        template: path.resolve(__dirname, 'public/index.html'),
+      }),
       new webpack.DefinePlugin({
         'process.env.APP_ENV': JSON.stringify(env.APP_ENV),
       }),
-      new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, 'public/index.html'),
+      new MiniCssExtractPlugin({
+        filename: 'css/[name].[contenthash].css',
+        chunkFilename: 'css/common.[hash].css',
       }),
-      new MiniCssExtractPlugin(),
       new CopyPlugin({
         patterns: [
           {
@@ -126,8 +172,28 @@ module.exports = (env, argv) => {
           },
         ],
       }),
-      (isEnvProduction && new BundleAnalyzerPlugin.BundleAnalyzerPlugin()) ||
-        (isEnvDevelopment && (() => {})),
     ],
+    // 日志
+    stats: {
+      colors: true,
+    },
   };
+}
+
+/**
+ * @returns {import('webpack').Configuration}
+ */
+module.exports = (env, argv) => {
+  // console.log(env, argv, process.env.NODE_ENV);
+
+  switch (env.APP_ENV) {
+    case 'dev':
+      return merge(getCommonConfig(env), developmentConfig);
+    case 'prod':
+      return merge(getCommonConfig(env), productionConfig);
+    case 'debug':
+      return merge(getCommonConfig(env), debuggerConfig);
+    default:
+      throw new Error('No matching configuration was found!');
+  }
 };
