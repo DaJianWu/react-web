@@ -5,10 +5,10 @@
   "presets": [
     [
       "@babel/preset-env",
-      // 按需导入 polyfills (core-js regenerator-runtime)
+      // 按需导入 polyfills (core-js regenerator-runtime 原型覆盖)
       {
         "useBuiltIns": "usage",
-        "corejs": "3.6.5"
+        "corejs": "3.35.1"
       }
     ],
     "@babel/preset-react",

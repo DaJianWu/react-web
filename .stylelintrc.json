@@ -31,11 +31,21 @@
       {
         "ignoreAtRules": [
           "include",
-          "mixin"
+          "mixin",
+          "extend"
         ]
       }
     ],
     "alpha-value-notation": "number",
-    "color-function-notation": "legacy"
+    "color-function-notation": "legacy",
+    "import-notation": "string",
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": [
+          "global"
+        ]
+      }
+    ]
   }
 }

@@ -9,6 +9,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer');
 
+const PUBLIC_PATH = '/';
+
 /**
  * @description 开发环境配置
  * @type {import('webpack').Configuration}
@@ -20,12 +22,13 @@ const developmentConfig = {
   devtool: 'source-map',
   // 开发服务器
   devServer: {
-    // static: path.resolve(__dirname, 'public'),
+    static: path.resolve(__dirname, 'public'),
+    host: 'localhost',
     port: 8888,
-    open: true,
+    open: false,
     hot: true,
     historyApiFallback: true,
-    proxy: {},
+    // proxy: {},
   },
   // 插件
   plugins: [new webpack.ProgressPlugin()],
@@ -40,19 +43,9 @@ const productionConfig = {
   mode: 'production',
   // 调试
   devtool: false,
+  // devtool: 'source-map',
   // 插件
   plugins: [new BundleAnalyzerPlugin.BundleAnalyzerPlugin()],
-};
-
-/**
- * @description 调试环境配置
- * @type {import('webpack').Configuration}
- */
-const debuggerConfig = {
-  // 模式
-  mode: 'development',
-  // 调试
-  devtool: 'source-map',
 };
 
 /**
@@ -71,7 +64,7 @@ function getCommonConfig(env) {
       filename: 'js/[name].[chunkhash].js',
       assetModuleFilename: 'assets/[hash][ext]',
       clean: true,
-      publicPath: '/',
+      publicPath: PUBLIC_PATH,
     },
     // 缓存
     cache: {
@@ -85,6 +78,12 @@ function getCommonConfig(env) {
       alias: {
         src: path.resolve(__dirname, 'src'),
       },
+    },
+    externals: {
+      react: 'React',
+      'react-dom': 'ReactDOM',
+      // 'react-router-dom': 'ReactRouterDOM',
+      // antd: 'antd',
     },
     // 优化
     optimization: {
@@ -116,20 +115,56 @@ function getCommonConfig(env) {
       rules: [
         {
           test: /\.css$/,
-          use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
+          exclude: /node_modules/,
+          use: [
+            'style-loader',
+            {
+              loader: 'css-loader',
+              options: {
+                modules: {
+                  auto: true,
+                  localIdentName: '[local]-[hash:base64:5]',
+                },
+              },
+            },
+            'postcss-loader',
+          ],
         },
         {
           test: /\.less$/,
+          exclude: /node_modules/,
           use: [
             MiniCssExtractPlugin.loader,
-            'css-loader',
+            {
+              loader: 'css-loader',
+              options: {
+                modules: {
+                  auto: true,
+                  localIdentName: '[local]-[hash:base64:5]',
+                },
+              },
+            },
             'postcss-loader',
             'less-loader',
           ],
         },
         {
           test: /\.scss$/,
-          use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
+          exclude: /node_modules/,
+          use: [
+            MiniCssExtractPlugin.loader,
+            {
+              loader: 'css-loader',
+              options: {
+                modules: {
+                  auto: true,
+                  localIdentName: '[local]-[hash:base64:5]',
+                },
+              },
+            },
+            'postcss-loader',
+            'sass-loader',
+          ],
         },
         {
           test: /\.(jsx?|tsx?)$/,
@@ -154,7 +189,7 @@ function getCommonConfig(env) {
         template: path.resolve(__dirname, 'public/index.html'),
       }),
       new webpack.DefinePlugin({
-        'process.env.APP_ENV': JSON.stringify(env.APP_ENV),
+        'APP_ENV': JSON.stringify(env.APP_ENV),
       }),
       new MiniCssExtractPlugin({
         filename: 'css/[name].[contenthash].css',
@@ -191,9 +226,7 @@ module.exports = (env, argv) => {
       return merge(getCommonConfig(env), developmentConfig);
     case 'prod':
       return merge(getCommonConfig(env), productionConfig);
-    case 'debug':
-      return merge(getCommonConfig(env), debuggerConfig);
     default:
-      throw new Error('No matching configuration was found!');
+      throw new Error(env.APP_ENV);
   }
 };

@@ -43,3 +43,9 @@ declare module '*.module.scss' {
   const classes: { readonly [key: string]: string };
   export default classes;
 }
+
+// 声明全局属性
+declare interface Window {
+  /** 应用运行时环境 */
+  APP_ENV: 'dev' | 'prod';
+}

@@ -23,6 +23,7 @@ export const Home: React.FC = () => {
   }, []);
 
   const handleOnClick = () => {
+    // @ts-ignore
     dispatch(fetchData);
     setRandom(Math.random());
   };

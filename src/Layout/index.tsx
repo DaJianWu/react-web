@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import { Layout as AntdLayout, Menu, Breadcrumb, Avatar } from 'antd';
 import { GitlabOutlined, Html5Outlined } from '@ant-design/icons';
 
@@ -10,11 +10,9 @@ import { NotFound } from '../pages/NotFound';
 
 const { Header, Sider, Content, Footer } = AntdLayout;
 
-interface P extends RouteComponentProps {}
+interface P { }
 interface S {
   collapsed: boolean;
-  selectedKeys: string[];
-  openKeys: string[];
 }
 
 /**
@@ -26,10 +24,12 @@ interface S {
  * @extends {React.PureComponent<P, S>}
  */
 class Layout extends React.PureComponent<P, S> {
-  public historyListen: any;
+  public state = {
+    collapsed: false,
+  };
 
   public getFindDeepResult = () => {
-    const hashResult = location.hash.split('#')[1];
+    const hashResult = window.location.hash.split('#')[1];
     const findDeepResult = findDeep(routerConfig, hashResult);
 
     if (findDeepResult) {
@@ -40,46 +40,25 @@ class Layout extends React.PureComponent<P, S> {
     }
   };
 
-  public getOpenAndSelectedKeys = () => {
+  public getDefaultKeys = () => {
     const result = this.getFindDeepResult();
 
-    if (result) {
-      return {
-        selectedKeys: [result.id],
-        openKeys: flattenDeep([result.item], false).map((i) => i.path),
-      };
-    } else {
+    if (!result) {
       return {
         selectedKeys: [],
         openKeys: [],
       };
     }
+
+    return {
+      selectedKeys: [result.id],
+      openKeys: flattenDeep([result.item], false).map((i) => i.path),
+    };
   };
-
-  public state = {
-    collapsed: false,
-    ...this.getOpenAndSelectedKeys(),
-  };
-
-  public componentDidMount(): void {
-    const { history } = this.props;
-
-    this.historyListen = history.listen((location) => {
-      // console.log('路由变化：', location);
-
-      this.setState((prev) => ({
-        ...prev,
-        ...this.getOpenAndSelectedKeys(),
-      }));
-    });
-  }
-
-  public componentWillUnmount(): void {
-    this.historyListen && this.historyListen();
-  }
 
   public render() {
-    const { collapsed, selectedKeys, openKeys } = this.state;
+    const { collapsed } = this.state;
+    const { selectedKeys, openKeys } = this.getDefaultKeys();
 
     console.log(selectedKeys, openKeys);
 
@@ -101,12 +80,8 @@ class Layout extends React.PureComponent<P, S> {
             <Menu
               theme='light'
               mode='inline'
-              onSelect={({ selectedKeys }) =>
-                this.setState({ selectedKeys: selectedKeys as string[] })
-              }
-              onOpenChange={(openKeys) => this.setState({ openKeys: openKeys as string[] })}
-              selectedKeys={selectedKeys}
-              openKeys={openKeys}
+              defaultSelectedKeys={selectedKeys}
+              defaultOpenKeys={openKeys}
             >
               {this.renderMenuItems(routerConfig)}
             </Menu>
@@ -119,11 +94,11 @@ class Layout extends React.PureComponent<P, S> {
               {this.renderBreadcrumbItems()}
             </Breadcrumb>
             <Content>
-              <Switch>
-                <Route path='/' exact component={Home} />
+              <Routes>
+                <Route index element={<Home />} />
                 {this.renderRoutes(routerConfig)}
-                <Route path='*' component={NotFound} />
-              </Switch>
+                <Route path='*' element={<NotFound />} />
+              </Routes>
             </Content>
           </AntdLayout>
         </AntdLayout>
@@ -159,7 +134,7 @@ class Layout extends React.PureComponent<P, S> {
           </Route>
         );
       } else {
-        return <Route key={route.path} path={route.path} component={route.component} />;
+        return <Route key={route.path} path={route.path} element={route.element} />;
       }
     });
   }
@@ -177,4 +152,4 @@ class Layout extends React.PureComponent<P, S> {
   }
 }
 
-export default withRouter(Layout) as any;
+export default Layout;

@@ -7,8 +7,11 @@ import type { MenuItemProps } from 'antd/lib/menu/MenuItem';
 import { Home } from 'src/pages/Home';
 import { Page1 } from 'src/pages/Page1';
 
-export interface RouterConfig extends RouteProps, MenuItemProps {
+export interface RouterConfig {
   path: string;
+  element?: React.ReactNode;
+  icon?: React.ReactNode;
+  title?: React.ReactNode;
   children?: RouterConfig[];
 }
 
@@ -20,7 +23,7 @@ export const routerConfig: RouterConfig[] = [
     title: '首页',
     icon: <DesktopOutlined />,
     path: '/home',
-    component: Home,
+    element: <Home />,
   },
   {
     title: '页面',
@@ -30,7 +33,7 @@ export const routerConfig: RouterConfig[] = [
       {
         title: '页面1',
         path: '/page/1',
-        component: Page1,
+        element: <Page1 />,
       },
     ],
   },

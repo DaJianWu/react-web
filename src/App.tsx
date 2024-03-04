@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Link } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import { Provider } from 'react-redux';
 import zhCN from 'antd/lib/locale/zh_CN';
@@ -16,14 +16,16 @@ import Layout from 'src/Layout';
  * @extends {React.Component}
  */
 class App extends React.Component {
-  public render() {
+  render() {
     return (
       <div className='app'>
-        <ConfigProvider locale={zhCN}>
-          <Provider store={store}>
-            <Layout />
-          </Provider>
-        </ConfigProvider>
+        <HashRouter basename='/'>
+          <ConfigProvider locale={zhCN}>
+            <Provider store={store}>
+              <Layout />
+            </Provider>
+          </ConfigProvider>
+        </HashRouter>
       </div>
     );
   }

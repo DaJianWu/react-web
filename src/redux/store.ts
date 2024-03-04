@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware } from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 
 import axiosInstance from 'src/server';
 import { init, update } from './action';
@@ -13,7 +13,7 @@ export const initialStore = {
 export const store = createStore(
   reducer,
   initialStore,
-  applyMiddleware(thunkMiddleware)
+  applyMiddleware(thunk)
 );
 
 export const selectorLoading = (state: any) => state.loading;
