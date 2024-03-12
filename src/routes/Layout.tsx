@@ -3,12 +3,12 @@ import { Routes, Route, Link } from 'react-router-dom';
 import { Layout as AntdLayout, Menu, Breadcrumb, Avatar } from 'antd';
 import { GitlabOutlined, Html5Outlined } from '@ant-design/icons';
 
-import './style.scss';
-import { routerConfig, RouterConfig, findDeep, flattenDeep } from '../routes';
-import { Home } from '../pages/Home';
-import { NotFound } from '../pages/NotFound';
+import './Layout.scss';
+import { routerConfig, RouterConfig, findDeep, flattenDeep } from './config';
+import { Home } from './Home';
+import { NotFound } from './NotFound';
 
-const { Header, Sider, Content, Footer } = AntdLayout;
+const { Sider } = AntdLayout;
 
 interface P { }
 interface S {
@@ -63,14 +63,15 @@ class Layout extends React.PureComponent<P, S> {
     // console.log(selectedKeys, openKeys);
 
     return (
-      <AntdLayout>
-        <Header>
+      <div className='Layout'>
+        <header>
           {/* <Avatar src='https://joeschmoe.io/api/v1/random' /> */}
           <a href='http://www.wudajian.xyz' target='_blank' rel='noreferrer'>
             Destiny 的个人首页
           </a>
-        </Header>
-        <AntdLayout>
+        </header>
+
+        <section>
           <Sider
             theme='light'
             collapsible
@@ -86,24 +87,27 @@ class Layout extends React.PureComponent<P, S> {
               {this.renderMenuItems(routerConfig)}
             </Menu>
           </Sider>
-          <AntdLayout>
+
+          <main>
             <Breadcrumb>
               <Breadcrumb.Item key='home'>
                 <Link to='/home'>Home</Link>
               </Breadcrumb.Item>
               {this.renderBreadcrumbItems()}
             </Breadcrumb>
-            <Content>
+
+            <div>
               <Routes>
                 <Route index element={<Home />} />
                 {this.renderRoutes(routerConfig)}
                 <Route path='*' element={<NotFound />} />
               </Routes>
-            </Content>
-          </AntdLayout>
-        </AntdLayout>
-        <Footer>React Web Created by wudajian</Footer>
-      </AntdLayout>
+            </div>
+          </main>
+        </section>
+
+        <footer>React Web Created by wudajian</footer>
+      </div>
     );
   }
 

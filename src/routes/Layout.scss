@@ -1,0 +1,56 @@
+.Layout {
+  height: 100%;
+
+  >header {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    column-gap: 50px;
+    color: #fff;
+    background: #001529;
+    padding: 0 50px;
+  }
+
+  >section {
+    display: flex;
+    height: calc(100% - 120px);
+
+    >aside {
+      position: relative;
+
+      >.ant-layout-sider-trigger {
+        position: absolute;
+        bottom: 10px;
+        text-align: center;
+        cursor: pointer;
+      }
+    }
+
+    >main {
+      flex: 1;
+      height: 100%;
+      padding: 0 16px 16px 16px;
+      background-color: #f2f6ff;
+
+      >.ant-breadcrumb {
+        height: 24px;
+      }
+
+      >div {
+        height: calc(100% - 24px);
+        overflow: auto;
+        padding: 8px;
+        background-color: #fff;
+      }
+    }
+  }
+
+  >footer {
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    background: #001529;
+  }
+}

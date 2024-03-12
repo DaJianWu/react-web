@@ -4,8 +4,8 @@ import { DesktopOutlined, PieChartOutlined } from '@ant-design/icons';
 import type { RouteProps } from 'react-router-dom';
 import type { MenuItemProps } from 'antd/lib/menu/MenuItem';
 
-import { Home } from 'src/pages/Home';
-import { Page1 } from 'src/pages/Page1';
+import { Home } from './Home';
+import { Page1 } from './Page1';
 
 export interface RouterConfig {
   path: string;
