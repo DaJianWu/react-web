@@ -22,13 +22,14 @@ const developmentConfig = {
   devtool: 'source-map',
   // 开发服务器
   devServer: {
+    // see /webpack-dev-server
     static: path.resolve(__dirname, 'public'),
     host: 'localhost',
     port: 8888,
     open: false,
     hot: true,
-    historyApiFallback: true,
-    // proxy: {},
+    // liveReload: true,
+    // historyApiFallback: true,
   },
   // 插件
   plugins: [new webpack.ProgressPlugin()],
@@ -57,7 +58,7 @@ function getCommonConfig(env) {
     // 构建目标
     target: 'browserslist',
     // 入口
-    entry: path.resolve(__dirname, 'src/index.jsx'),
+    entry: path.resolve(__dirname, 'src/index.tsx'),
     // 出口
     output: {
       path: path.resolve(__dirname, 'dist'),
@@ -83,30 +84,30 @@ function getCommonConfig(env) {
       react: 'React',
       'react-dom': 'ReactDOM',
       // 'react-router-dom': 'ReactRouterDOM',
-      // antd: 'antd',
+      antd: 'antd',
     },
     // 优化
     optimization: {
       // 分块策略
       splitChunks: {
         chunks: 'all',
-        cacheGroups: {
-          // defaultVendors: {
-          //   test: /[\\/]node_modules[\\/]/,
-          //   priority: -10,
-          //   reuseExistingChunk: true,
-          // },
-          // default: {
-          //   minChunks: 2,
-          //   priority: -20,
-          //   reuseExistingChunk: true,
-          // },
-          // styles: {
-          //   test: /\.css$/,
-          //   minSize: 0,
-          //   minChunks: 2,
-          // }
-        },
+        // cacheGroups: {
+        //   defaultVendors: {
+        //     test: /[\\/]node_modules[\\/]/,
+        //     priority: -10,
+        //     reuseExistingChunk: true,
+        //   },
+        //   default: {
+        //     minChunks: 2,
+        //     priority: -20,
+        //     reuseExistingChunk: true,
+        //   },
+        //   styles: {
+        //     test: /\.css$/,
+        //     minSize: 0,
+        //     minChunks: 2,
+        //   }
+        // },
       },
     },
     // 模块
@@ -118,34 +119,8 @@ function getCommonConfig(env) {
           exclude: /node_modules/,
           use: [
             'style-loader',
-            {
-              loader: 'css-loader',
-              options: {
-                modules: {
-                  auto: true,
-                  localIdentName: '[local]-[hash:base64:5]',
-                },
-              },
-            },
+            'css-loader',
             'postcss-loader',
-          ],
-        },
-        {
-          test: /\.less$/,
-          exclude: /node_modules/,
-          use: [
-            MiniCssExtractPlugin.loader,
-            {
-              loader: 'css-loader',
-              options: {
-                modules: {
-                  auto: true,
-                  localIdentName: '[local]-[hash:base64:5]',
-                },
-              },
-            },
-            'postcss-loader',
-            'less-loader',
           ],
         },
         {
@@ -198,12 +173,9 @@ function getCommonConfig(env) {
       new CopyPlugin({
         patterns: [
           {
-            from: path.resolve(__dirname, 'public'),
-            to: path.resolve(__dirname, 'dist'),
+            from: path.resolve(__dirname, 'public/static'),
+            to: path.resolve(__dirname, 'dist/static'),
             toType: 'dir',
-            globOptions: {
-              ignore: ['**/index.html'],
-            },
           },
         ],
       }),
@@ -219,7 +191,7 @@ function getCommonConfig(env) {
  * @returns {import('webpack').Configuration}
  */
 module.exports = (env, argv) => {
-  // console.log(env, argv, process.env.NODE_ENV);
+  // console.log(env, env.WEBPACK_BUILD, argv, process.env.NODE_ENV);
 
   switch (env.APP_ENV) {
     case 'dev':

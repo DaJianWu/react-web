@@ -6,13 +6,6 @@
   "overrides": [
     {
       "files": [
-        "*.less",
-        "**/*.less"
-      ],
-      "customSyntax": "postcss-less"
-    },
-    {
-      "files": [
         "*.scss",
         "**/*.scss"
       ],
@@ -21,7 +14,8 @@
   ],
   "ignoreFiles": [
     "node_modules/",
-    "dist/"
+    "dist/",
+    "public/"
   ],
   "rules": {
     "no-empty-source": null,

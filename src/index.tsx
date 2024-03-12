@@ -9,11 +9,13 @@ import App from './App';
  * @author wudajian
  * @date 2022/06/08
  */
-ReactDOMClient.createRoot(document.getElementById('root')).render(
+ReactDOMClient.createRoot(document.getElementById('root') as Element).render(
   // <React.StrictMode>
   <App />
   // </React.StrictMode>
 );
+
+// console.log(process.env.NODE_ENV, APP_ENV);
 
 // if (module && module.hot) {
 //   module.hot.accept();

@@ -3,7 +3,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import { Layout as AntdLayout, Menu, Breadcrumb, Avatar } from 'antd';
 import { GitlabOutlined, Html5Outlined } from '@ant-design/icons';
 
-import './style.less';
+import './style.scss';
 import { routerConfig, RouterConfig, findDeep, flattenDeep } from '../routes';
 import { Home } from '../pages/Home';
 import { NotFound } from '../pages/NotFound';
@@ -60,12 +60,12 @@ class Layout extends React.PureComponent<P, S> {
     const { collapsed } = this.state;
     const { selectedKeys, openKeys } = this.getDefaultKeys();
 
-    console.log(selectedKeys, openKeys);
+    // console.log(selectedKeys, openKeys);
 
     return (
       <AntdLayout>
         <Header>
-          <Avatar src='https://joeschmoe.io/api/v1/random' />
+          {/* <Avatar src='https://joeschmoe.io/api/v1/random' /> */}
           <a href='http://www.wudajian.xyz' target='_blank' rel='noreferrer'>
             Destiny 的个人首页
           </a>

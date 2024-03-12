@@ -34,18 +34,14 @@ declare module '*.module.css' {
   export default classes;
 }
 
-declare module '*.module.less' {
-  const classes: { readonly [key: string]: string };
-  export default classes;
-}
-
 declare module '*.module.scss' {
   const classes: { readonly [key: string]: string };
   export default classes;
 }
 
+/** 应用运行时环境 */
+declare const APP_ENV: 'dev' | 'prod';
+
 // 声明全局属性
 declare interface Window {
-  /** 应用运行时环境 */
-  APP_ENV: 'dev' | 'prod';
 }
