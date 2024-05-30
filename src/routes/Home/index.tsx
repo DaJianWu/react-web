@@ -13,8 +13,8 @@ import style from './style.module.scss';
 export const Home: React.FC = () => {
   const [random, setRandom] = useState(0);
 
-  const handleOnClick =async () => {
-    const response = await axiosInstance.get('https://dajianwu.github.io/dist/data.json');
+  const handleOnClick = async () => {
+    const response = await axiosInstance.get('https://dajianwu.github.io/static/data.json');
     console.log(response);
     setRandom(Math.random());
   };
@@ -26,7 +26,7 @@ export const Home: React.FC = () => {
         type='primary'
         onClick={handleOnClick}
       >
-        Click Me! {Boolean(random) && random}
+        Click Me! {random}
       </Button>
     </div>
   );
