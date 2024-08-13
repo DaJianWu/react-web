@@ -131,9 +131,11 @@ function getCommonConfig(env) {
             {
               loader: 'css-loader',
               options: {
+                // esModule: true,
                 modules: {
                   auto: true,
                   localIdentName: '[local]-[hash:base64:5]',
+                  namedExport: false,
                 },
               },
             },
